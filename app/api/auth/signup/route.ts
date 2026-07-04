@@ -12,17 +12,24 @@ export const POST = withErrorHandling(async (req: Request) => {
   console.log("🚀 Signup request received");
 
   const key = `signup:${getClientKey(req)}`;
-  console.log("✅ Client Key:", key);
+  console.log("📌 Client Key:", key);
 
-  if (!rateLimit(key, { limit: 5, windowMs: 60_000 }).success) {
+  const result = rateLimit(key, { limit: 5, windowMs: 60_000 });
+
+  if (!result.success) {
     console.log("❌ Rate limit exceeded");
     return apiError("Too many signup attempts. Try again in a minute.", 429);
   }
 
   console.log("✅ Rate limit passed");
 
+  console.log("📥 Reading request body...");
   const body = signupSchema.parse(await req.json());
-  console.log("✅ Request parsed:", body.email);
+
+  console.log("✅ Body parsed:", {
+    name: body.name,
+    email: body.email,
+  });
 
   console.log("🔌 Connecting to MongoDB...");
   await connectDB();
@@ -46,25 +53,26 @@ export const POST = withErrorHandling(async (req: Request) => {
     email: body.email,
     passwordHash,
   });
+
   console.log("✅ User created:", user.email);
 
-  console.log("🎫 Creating JWT...");
+  console.log("🎫 Generating Access Token...");
   const accessToken = signAccessToken({
     sub: user.id,
     email: user.email,
   });
 
+  console.log("🎫 Generating Refresh Token...");
   const refreshToken = signRefreshToken({
     sub: user.id,
     tokenVersion: user.tokenVersion,
   });
 
-  console.log("✅ JWT created");
-
+  console.log("🍪 Setting refresh cookie...");
   setRefreshCookie(refreshToken);
-  console.log("🍪 Cookie set");
 
-  console.log("🎉 Signup successful");
+  console.log("🍪 Cookie set");
+  console.log("🎉 Signup completed successfully");
 
   return NextResponse.json({
     accessToken,

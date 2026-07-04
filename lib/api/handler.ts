@@ -28,7 +28,8 @@ export function withErrorHandling<T extends (req: Request, ctx: any) => Promise<
 
       // Unauthorized
       if (err instanceof UnauthorizedError) {
-        console.error("❌ Unauthorized Error:", err.message);
+        console.error("❌ Unauthorized Error");
+        console.error(err.message);
 
         return apiError(err.message, 401);
       }
@@ -47,7 +48,7 @@ export function withErrorHandling<T extends (req: Request, ctx: any) => Promise<
 
       // Unknown Error
       console.error("======================================");
-      console.error("❌ API ERROR");
+      console.error("❌ API ERROR START");
       console.error("======================================");
       console.error(err);
 
@@ -57,6 +58,8 @@ export function withErrorHandling<T extends (req: Request, ctx: any) => Promise<
         console.error(err.stack);
       }
 
+      console.error("======================================");
+      console.error("❌ API ERROR END");
       console.error("======================================");
 
       return apiError("Something went wrong. Please try again.", 500);
