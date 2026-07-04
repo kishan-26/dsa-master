@@ -27,12 +27,13 @@ const APPROACHES: { key: "brute" | "better" | "optimal"; label: string }[] = [
 ];
 
 interface CodeApproachEditorProps {
-  code: { brute?: CodeApproach; better?: CodeApproach; optimal?: CodeApproach };
+  code?: { brute?: CodeApproach; better?: CodeApproach; optimal?: CodeApproach };
   onSave: (approach: "brute" | "better" | "optimal", value: CodeApproach) => Promise<unknown>;
 }
 
 export function CodeApproachEditor({ code, onSave }: CodeApproachEditorProps) {
   const [activeTab, setActiveTab] = useState<"brute" | "better" | "optimal">("optimal");
+  const safeCode = code ?? {};
 
   return (
     <div>
@@ -59,7 +60,7 @@ export function CodeApproachEditor({ code, onSave }: CodeApproachEditorProps) {
           activeTab === a.key && (
             <SingleApproachEditor
               key={a.key}
-              approach={code[a.key] ?? { code: "", language: "cpp" }}
+              approach={safeCode[a.key] ?? { code: "", language: "cpp" }}
               onSave={(value) => onSave(a.key, value)}
             />
           )
