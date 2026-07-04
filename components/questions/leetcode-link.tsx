@@ -2,9 +2,15 @@ import { ExternalLink } from "lucide-react";
 
 export function LeetCodeLink({ slug }: { slug?: string }) {
   if (!slug) return null;
+
+  // Support both slug and full URL
+  const href = slug.startsWith("http")
+    ? slug
+    : `https://leetcode.com/problems/${slug}/`;
+
   return (
     <a
-      href={`https://leetcode.com/problems/${slug}/`}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       onClick={(e) => e.stopPropagation()}

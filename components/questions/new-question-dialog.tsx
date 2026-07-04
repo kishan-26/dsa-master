@@ -41,43 +41,60 @@ export function NewQuestionDialog({ open, onClose }: { open: boolean; onClose: (
     setCreatingTopic(false);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+async function handleSubmit(e: React.FormEvent) {
+  e.preventDefault();
 
-    let topicId = form.topic;
-    if (creatingTopic && form.newTopicName.trim()) {
-      try {
-        const result = await createTopic.mutateAsync(form.newTopicName.trim());
-        topicId = result.topic._id;
-      } catch {
-        toast.error("Couldn't create that topic");
-        return;
-      }
-    }
+  let topicId = form.topic;
 
-    if (!form.title.trim() || !topicId) {
-      toast.error("Title and topic are required");
+  // Convert full LeetCode URL into slug automatically
+  let leetcodeSlug = form.leetcodeSlug.trim();
+
+  if (leetcodeSlug.includes("leetcode.com/problems/")) {
+    const match = leetcodeSlug.match(/problems\/([^/?#]+)/);
+
+if (match && match[1]) {
+  leetcodeSlug = match[1];
+}
+  }
+
+  if (creatingTopic && form.newTopicName.trim()) {
+    try {
+      const result = await createTopic.mutateAsync(form.newTopicName.trim());
+      topicId = result.topic._id;
+    } catch {
+      toast.error("Couldn't create that topic");
       return;
     }
-
-    try {
-      const { question } = await createQuestion.mutateAsync({
-        title: form.title.trim(),
-        difficulty: form.difficulty,
-        topic: topicId,
-        patterns: selectedPatternIds,
-        platform: form.platform,
-        leetcodeSlug: form.leetcodeSlug || undefined,
-        tags,
-      });
-      toast.success("Question added");
-      reset();
-      onClose();
-      router.push(`/questions/${question._id}` as any);
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Couldn't create question");
-    }
   }
+
+  if (!form.title.trim() || !topicId) {
+    toast.error("Title and topic are required");
+    return;
+  }
+
+  try {
+    const { question } = await createQuestion.mutateAsync({
+      title: form.title.trim(),
+      difficulty: form.difficulty,
+      topic: topicId,
+      patterns: selectedPatternIds,
+      platform: form.platform,
+      leetcodeSlug: leetcodeSlug || undefined,
+      tags,
+    });
+
+    toast.success("Question added");
+    reset();
+    onClose();
+    router.push(`/questions/${question._id}` as any);
+  } catch (err) {
+    toast.error(
+      err instanceof ApiError
+        ? err.message
+        : "Couldn't create question"
+    );
+  }
+}
 
   return (
     <Dialog
