@@ -30,7 +30,7 @@ export function QuestionRow({ question, onToggleFavorite }: {
     <motion.div layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="group">
       <Link
         href={`/questions/${question._id}` as any}
-        className="focus-ring flex items-center gap-4 rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-border hover:bg-secondary/40"
+        className="focus-ring flex items-center gap-4 rounded-xl border border-transparent px-4 py-3 transition-all duration-200 hover:scale-[1.01] hover:border-border hover:bg-secondary/40 hover:shadow-md"
       >
         <button
           onClick={(e) => {

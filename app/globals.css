@@ -76,7 +76,26 @@
 
 @layer utilities {
   .glass {
-    @apply bg-card/60 backdrop-blur-xl border border-white/10;
+    @apply bg-card/50 backdrop-blur-2xl border border-white/10;
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 0 1px hsl(var(--gradient-from) / 0.15), 0 8px 30px -8px hsl(var(--gradient-from) / 0.35);
+  }
+
+  .glow-primary-hover {
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+  }
+  .glow-primary-hover:hover {
+    box-shadow: 0 0 0 1px hsl(var(--gradient-from) / 0.25), 0 12px 40px -8px hsl(var(--gradient-from) / 0.4);
+  }
+
+  .gradient-border {
+    position: relative;
+    border: 1px solid transparent;
+    background:
+      linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+      linear-gradient(135deg, hsl(var(--gradient-from) / 0.6), hsl(var(--gradient-to) / 0.6)) border-box;
   }
 
   .text-gradient {
@@ -97,5 +116,12 @@
 
   .focus-ring {
     @apply outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px) scale(1.01);
   }
 }

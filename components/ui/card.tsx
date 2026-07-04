@@ -1,10 +1,20 @@
 import { type HTMLAttributes } from "react";
 import { cn } from "@/lib/utils/cn";
 
-export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function Card({
+  className,
+  interactive,
+  glow,
+  ...props
+}: HTMLAttributes<HTMLDivElement> & { interactive?: boolean; glow?: boolean }) {
   return (
     <div
-      className={cn("rounded-2xl border border-border bg-card shadow-sm", className)}
+      className={cn(
+        "rounded-2xl border border-border bg-card shadow-sm transition-colors duration-200",
+        glow && "glow-primary",
+        interactive && "hover-lift glow-primary-hover cursor-pointer hover:border-primary/40",
+        className
+      )}
       {...props}
     />
   );

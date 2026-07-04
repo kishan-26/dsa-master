@@ -35,7 +35,7 @@ export function GroupCard({
   return (
     <Link
       href={href as any}
-      className="focus-ring block rounded-2xl border border-border bg-card p-5 transition-colors hover:border-primary/40"
+      className="hover-lift glow-primary-hover focus-ring block rounded-2xl border border-border bg-card p-5 transition-colors hover:border-primary/40"
     >
       <div className="flex items-start justify-between">
         <h3 className="font-semibold">{name}</h3>

@@ -2,8 +2,9 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Inbox } from "lucide-react";
+import { Plus, Inbox, Target } from "lucide-react";
 import { toast } from "sonner";
+import { PremiumEmptyState } from "@/components/ui/premium-empty-state";
 import { Button } from "@/components/ui/button";
 import { QuestionSearchBar } from "@/components/questions/question-search-bar";
 import { QuestionFilterBar } from "@/components/questions/question-filter-bar";
@@ -58,13 +59,27 @@ function QuestionsPageContent() {
         <QuestionFilterBar filters={filters} onChange={setFilters} />
       </div>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card">
+      <div className={data && data.items.length === 0 && !isLoading ? "mt-6" : "mt-6 rounded-2xl border border-border bg-card"}>
         {isLoading ? (
           <QuestionListSkeleton />
         ) : data && data.items.length > 0 ? (
           <QuestionListBody items={data.items} isFetching={isFetching} />
+        ) : filters.search || filters.difficulty || filters.status || filters.favorite || filters.revisionDue || filters.topic || filters.pattern ? (
+          <PremiumEmptyState
+            icon={Inbox}
+            title="No questions match your filters"
+            description="Try clearing a filter, or add a new question to your tracker."
+            actionLabel="Add question"
+            onAction={() => setDialogOpen(true)}
+          />
         ) : (
-          <EmptyState onAdd={() => setDialogOpen(true)} />
+          <PremiumEmptyState
+            icon={Target}
+            title="Start your DSA journey"
+            description="You haven't added any questions yet. Add your first one and start building your streak."
+            actionLabel="Add your first question"
+            onAction={() => setDialogOpen(true)}
+          />
         )}
       </div>
 
@@ -127,20 +142,4 @@ function QuestionRowWithFavorite({ question }: { question: any }) {
   );
 }
 
-function EmptyState({ onAdd }: { onAdd: () => void }) {
-  return (
-    <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary">
-        <Inbox className="h-5 w-5 text-muted-foreground" />
-      </div>
-      <div>
-        <p className="font-medium">No questions match your filters</p>
-        <p className="text-sm text-muted-foreground">Try clearing a filter, or add your first question.</p>
-      </div>
-      <Button onClick={onAdd} size="sm">
-        <Plus className="h-4 w-4" />
-        Add question
-      </Button>
-    </div>
-  );
-}
+

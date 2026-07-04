@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
 
 export function GoalRing({
   value,
@@ -51,7 +52,7 @@ export function GoalRing({
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-xl font-bold">{value}</span>
+          <span className="text-xl font-bold"><AnimatedCounter value={value} /></span>
           <span className="text-xs text-muted-foreground">/ {goal}</span>
         </div>
       </div>

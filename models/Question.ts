@@ -131,9 +131,12 @@ const QuestionSchema = new Schema<IQuestion>(
     mistakes: [{ type: String, enum: MISTAKE_TAGS }],
     tags: [{ type: String, trim: true }],
     code: {
-      brute: CodeApproachSchema,
-      better: CodeApproachSchema,
-      optimal: CodeApproachSchema,
+      type: {
+        brute: CodeApproachSchema,
+        better: CodeApproachSchema,
+        optimal: CodeApproachSchema,
+      },
+      default: () => ({}),
     },
     editorialNotes: { type: String },
   },

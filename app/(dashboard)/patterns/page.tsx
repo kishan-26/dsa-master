@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { GitBranch } from "lucide-react";
 import { usePatterns } from "@/hooks/use-taxonomy";
 import { GroupCard } from "@/components/taxonomy/group-card";
+import { PremiumEmptyState } from "@/components/ui/premium-empty-state";
+import { StaggerContainer, StaggerItem } from "@/components/ui/stagger-list";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils/cn";
@@ -40,41 +42,40 @@ export default function PatternsPage() {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <StaggerContainer className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {isLoading ? (
           Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-40 w-full rounded-2xl" />)
         ) : patterns && patterns.length > 0 ? (
           patterns.map((p) => (
-            <GroupCard
-              key={p._id}
-              href={`/patterns/${p.slug}`}
-              name={p.name}
-              total={p.total}
-              solved={p.solved}
-              masteryScore={p.masteryScore}
-              revisionDueCount={p.revisionDueCount}
-              avgConfidence={p.avgConfidence}
-              lastPracticedAt={p.lastPracticedAt}
-            />
+            <StaggerItem key={p._id}>
+              <GroupCard
+                href={`/patterns/${p.slug}`}
+                name={p.name}
+                total={p.total}
+                solved={p.solved}
+                masteryScore={p.masteryScore}
+                revisionDueCount={p.revisionDueCount}
+                avgConfidence={p.avgConfidence}
+                lastPracticedAt={p.lastPracticedAt}
+              />
+            </StaggerItem>
           ))
         ) : (
           <EmptyState />
         )}
-      </div>
+      </StaggerContainer>
     </motion.div>
   );
 }
 
 function EmptyState() {
   return (
-    <div className="col-span-full flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border py-16 text-center">
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary">
-        <GitBranch className="h-5 w-5 text-muted-foreground" />
-      </div>
-      <div>
-        <p className="font-medium">No patterns yet</p>
-        <p className="text-sm text-muted-foreground">Tag a question with a pattern (e.g. Sliding Window) to see it here.</p>
-      </div>
+    <div className="col-span-full">
+      <PremiumEmptyState
+        icon={GitBranch}
+        title="No patterns yet"
+        description="Tag a question with a pattern (e.g. Sliding Window) to see it here."
+      />
     </div>
   );
 }

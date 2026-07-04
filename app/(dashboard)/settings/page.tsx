@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Check, Download } from "lucide-react";
+import { Check, Download, BellRing } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -11,10 +11,31 @@ import { useTheme } from "@/components/theme/theme-provider";
 import { ACCENT_PALETTES, type AccentColor } from "@/lib/theme/accent-palettes";
 import { apiFetch, ApiError } from "@/lib/utils/api-fetch";
 import { cn } from "@/lib/utils/cn";
+import {
+  getNotificationPermission,
+  requestNotificationPermission,
+  playNotificationChime,
+} from "@/lib/notifications/browser-push";
 
 export default function SettingsPage() {
   const { theme, accent, setAccent } = useTheme();
   const [exporting, setExporting] = useState(false);
+  const [permission, setPermission] = useState<NotificationPermission | "unsupported">("default");
+
+  useEffect(() => {
+    setPermission(getNotificationPermission());
+  }, []);
+
+  async function handleEnableNotifications() {
+    const result = await requestNotificationPermission();
+    setPermission(result);
+    if (result === "granted") {
+      playNotificationChime();
+      toast.success("Notifications enabled — you'll hear a chime for new reminders.");
+    } else if (result === "denied") {
+      toast.error("Notifications were blocked. Enable them in your browser's site settings to turn this on.");
+    }
+  }
 
   async function handleAccentChange(id: AccentColor) {
     setAccent(id);
@@ -99,6 +120,36 @@ export default function SettingsPage() {
               </button>
             ))}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Notifications</CardTitle>
+          <CardDescription>
+            Browser push notifications with a sound, for revisions due and daily goal reminders. In-app only — no
+            email or phone alerts (that would need a separate service).
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {permission === "unsupported" ? (
+            <p className="text-sm text-muted-foreground">Your browser doesn't support push notifications.</p>
+          ) : permission === "granted" ? (
+            <div className="flex items-center gap-2 text-sm text-success">
+              <Check className="h-4 w-4" />
+              Notifications are enabled
+            </div>
+          ) : permission === "denied" ? (
+            <p className="text-sm text-muted-foreground">
+              Notifications are blocked at the browser level. Enable them from your browser's site settings for this
+              page, then refresh.
+            </p>
+          ) : (
+            <Button variant="outline" onClick={handleEnableNotifications}>
+              <BellRing className="h-4 w-4" />
+              Enable notifications
+            </Button>
+          )}
         </CardContent>
       </Card>
 

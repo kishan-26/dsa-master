@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Plus, Trash2, Layers3, PartyPopper } from "lucide-react";
+import { PremiumEmptyState } from "@/components/ui/premium-empty-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -92,10 +93,13 @@ export default function FlashcardsPage() {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center gap-2 py-8 text-center">
-              <Layers3 className="h-6 w-6 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">No flashcards yet. Create one from any question.</p>
-            </div>
+            <PremiumEmptyState
+              icon={Layers3}
+              title="No flashcards yet"
+              description="Create one from any question — the fastest way is the 'Make flashcard' button on a question's detail page."
+              actionLabel="New flashcard"
+              onAction={() => setDialogOpen(true)}
+            />
           )}
         </CardContent>
       </Card>

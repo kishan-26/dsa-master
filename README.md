@@ -81,3 +81,23 @@ Generate JWT secrets with `openssl rand -hex 32`.
 16. Settings — ✅ Phase 1/5
 
 The app is feature-complete against your spec. Next steps are up to you: real-data validation, visual QA, or picking at any assumption flagged above.
+
+## Visual Polish Pass (post-launch, batch 1 of 3 requested)
+After the initial build, a "make it feel premium" pass was requested. This batch covered **animations + glassmorphism/glow**, plus one item pulled forward from a later batch (**push notifications with sound**, since it was quick to add alongside the notification bell that already existed).
+
+**Added:**
+- `components/ui/animated-counter.tsx` — count-up animation for stat numbers (dashboard streak/solved/due, goal ring).
+- `components/ui/stagger-list.tsx` — reusable fade-in-stagger wrapper, applied to the dashboard stat cards and the Topics/Patterns grids.
+- `components/ui/page-transition.tsx` — cross-fade on every route change, wired into the dashboard layout.
+- `components/ui/premium-empty-state.tsx` — bigger glowing icon, friendlier copy, CTA button; replaces the old plain "No items" text on Questions/Topics/Patterns/Flashcards.
+- Card component gained `interactive` and `glow` props (hover-lift + soft glow); Button gained hover-scale and active-press micro-interactions.
+- New CSS utilities: `.glow-primary`, `.glow-primary-hover`, `.gradient-border`, and a richer `.glass` (heavier blur).
+- Sidebar: entrance slide-in, smoother active-item spring, hover nudge.
+- **Browser push notifications with sound**: `lib/notifications/browser-push.ts` (permission request, `Notification` API, a synthesized two-tone chime via Web Audio — no audio file was available to source in this sandbox, so the chime is generated in code) + `hooks/use-browser-notification-watcher.ts` (fires once per new reminder, not on every 5-minute poll). Toggle lives in Settings → Notifications.
+
+**Explicitly not done in this batch (next batches, on request):**
+- Confetti, mascot/illustration, calendar hover tooltips, search autocomplete, multi-theme switching beyond the accent picker, sound effects for clicks, drag-and-drop planner, rich math/image notes, contest rating, AI Coach.
+- AI Coach specifically needs your own Anthropic API key — skipped per your instruction, not forgotten.
+- "Phone rings" notifications aren't possible from a website — browser push (implemented) is the closest real equivalent; explained this trade-off before building.
+
+Same verification caveat as every phase: compiled and type-checked cleanly in this sandbox (`next build`, 42 routes, zero errors), but I have no browser here to confirm the animations actually feel right — please look at it running and tell me what to dial up or down.

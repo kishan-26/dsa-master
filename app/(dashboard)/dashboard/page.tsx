@@ -2,11 +2,13 @@
 
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { Flame, CheckCircle2, Clock, Trophy } from "lucide-react";
+import { Flame, Clock, Trophy } from "lucide-react";
 import { useAuthStore } from "@/store/auth-store";
 import { useDashboardAnalytics } from "@/hooks/use-analytics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
+import { StaggerContainer, StaggerItem } from "@/components/ui/stagger-list";
 import { GoalRing } from "@/components/dashboard/goal-ring";
 import { StrongWeakTopics } from "@/components/dashboard/strong-weak-topics";
 import { LearningCalendar } from "@/components/dashboard/learning-calendar";
@@ -47,31 +49,40 @@ export default function DashboardPage() {
       </h1>
       <p className="mt-1 text-muted-foreground">Here&apos;s where your prep stands today.</p>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="flex items-center justify-center p-4">
-          <GoalRing value={data.solvedToday} goal={data.dailyGoal.questions} label="Today's goal" />
-        </Card>
+      <StaggerContainer className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerItem>
+          <Card glow className="flex h-full items-center justify-center p-4">
+            <GoalRing value={data.solvedToday} goal={data.dailyGoal.questions} label="Today's goal" />
+          </Card>
+        </StaggerItem>
 
-        <StatCard
-          icon={<Flame className="h-5 w-5 text-warning" />}
-          label="Current streak"
-          value={`${data.currentStreak} day${data.currentStreak === 1 ? "" : "s"}`}
-        />
-        <StatCard
-          icon={<Clock className="h-5 w-5 text-primary" />}
-          label="Revision due"
-          value={String(data.revisionDueCount)}
-          href="/revisions"
-        />
-        <StatCard
-          icon={<Trophy className="h-5 w-5 text-success" />}
-          label="Total solved"
-          value={String(data.totalSolved)}
-        />
-      </div>
+        <StaggerItem>
+          <StatCard
+            icon={<Flame className="h-5 w-5 text-warning" />}
+            label="Current streak"
+            value={data.currentStreak}
+            suffix={data.currentStreak === 1 ? " day" : " days"}
+          />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard
+            icon={<Clock className="h-5 w-5 text-primary" />}
+            label="Revision due"
+            value={data.revisionDueCount}
+            href="/revisions"
+          />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard
+            icon={<Trophy className="h-5 w-5 text-success" />}
+            label="Total solved"
+            value={data.totalSolved}
+          />
+        </StaggerItem>
+      </StaggerContainer>
 
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
+        <Card interactive={false} className="lg:col-span-2">
           <CardHeader>
             <CardTitle>This week</CardTitle>
           </CardHeader>
@@ -117,19 +128,24 @@ function StatCard({
   icon,
   label,
   value,
+  suffix = "",
   href,
 }: {
   icon: React.ReactNode;
   label: string;
-  value: string;
+  value: number;
+  suffix?: string;
   href?: string;
 }) {
   const content = (
-    <Card className={href ? "h-full transition-colors hover:border-primary/40" : "h-full"}>
+    <Card interactive={!!href} className="h-full">
       <CardContent className="flex h-full flex-col justify-center gap-2 p-6">
         {icon}
         <div>
-          <p className="text-2xl font-bold">{value}</p>
+          <p className="text-2xl font-bold">
+            <AnimatedCounter value={value} />
+            {suffix}
+          </p>
           <p className="text-sm text-muted-foreground">{label}</p>
         </div>
       </CardContent>
