@@ -58,6 +58,19 @@ export const logAttemptSchema = z.object({
 });
 export type LogAttemptInput = z.infer<typeof logAttemptSchema>;
 
+export const bulkImportItemSchema = z.object({
+  title: z.string().min(1).max(200),
+  difficulty: z.enum(DIFFICULTIES),
+  leetcodeSlug: z.string().min(1),
+  topic: z.string().min(1).max(80),
+  patterns: z.array(z.string().max(80)).default([]),
+});
+
+export const bulkImportSchema = z.object({
+  items: z.array(bulkImportItemSchema).min(1).max(500),
+});
+export type BulkImportInput = z.infer<typeof bulkImportSchema>;
+
 export const questionListQuerySchema = z.object({
   search: z.string().optional(),
   difficulty: z.enum(DIFFICULTIES).optional(),

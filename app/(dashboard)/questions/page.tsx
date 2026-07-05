@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Inbox, Target } from "lucide-react";
+import { Plus, Inbox, Target, Download } from "lucide-react";
 import { toast } from "sonner";
 import { PremiumEmptyState } from "@/components/ui/premium-empty-state";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { QuestionFilterBar } from "@/components/questions/question-filter-bar";
 import { QuestionRow } from "@/components/questions/question-row";
 import { QuestionListSkeleton } from "@/components/questions/question-list-skeleton";
 import { NewQuestionDialog } from "@/components/questions/new-question-dialog";
+import { ImportQuestionsDialog } from "@/components/questions/import-questions-dialog";
 import { useQuestions, useUpdateQuestion } from "@/hooks/use-questions";
 import { useQuestionUrlFilters } from "@/hooks/use-question-url-filters";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -29,6 +30,7 @@ function QuestionsPageContent() {
   const [searchInput, setSearchInput] = useState(filters.search ?? "");
   const debouncedSearch = useDebounce(searchInput, 250);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
 
   useEffect(() => {
     if (debouncedSearch !== (filters.search ?? "")) {
@@ -48,10 +50,16 @@ function QuestionsPageContent() {
             {data ? `${data.pagination.total} question${data.pagination.total === 1 ? "" : "s"}` : "Loading…"}
           </p>
         </div>
-        <Button onClick={() => setDialogOpen(true)}>
-          <Plus className="h-4 w-4" />
-          Add question
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setImportDialogOpen(true)}>
+            <Download className="h-4 w-4" />
+            Import questions
+          </Button>
+          <Button onClick={() => setDialogOpen(true)}>
+            <Plus className="h-4 w-4" />
+            Add question
+          </Button>
+        </div>
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -76,9 +84,9 @@ function QuestionsPageContent() {
           <PremiumEmptyState
             icon={Target}
             title="Start your DSA journey"
-            description="You haven't added any questions yet. Add your first one and start building your streak."
-            actionLabel="Add your first question"
-            onAction={() => setDialogOpen(true)}
+            description="You haven't added any questions yet. Import a curated list (like Blind 75 style problems) in one click, or add your first question manually."
+            actionLabel="Import questions"
+            onAction={() => setImportDialogOpen(true)}
           />
         )}
       </div>
@@ -108,6 +116,7 @@ function QuestionsPageContent() {
       )}
 
       <NewQuestionDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
+      <ImportQuestionsDialog open={importDialogOpen} onClose={() => setImportDialogOpen(false)} />
     </motion.div>
   );
 }
